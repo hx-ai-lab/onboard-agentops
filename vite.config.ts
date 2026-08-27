@@ -8,6 +8,8 @@ export default defineConfig(({ mode }) => {
     base: env.VITE_BASE_PATH || "/",
     plugins: [react()],
     test: {
+      include: ["src/**/*.test.{ts,tsx}"],
+      exclude: ["tests/e2e/**", "node_modules/**", "dist/**"],
       environment: "jsdom",
       setupFiles: "./src/test/setup.ts",
       css: true,

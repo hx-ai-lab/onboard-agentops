@@ -28,7 +28,7 @@ jobs:
         run: npm run typecheck
       - name: Lint
         run: npm run lint
-      - name: Unit tests
+      - name: Unit and component tests (Vitest only)
         run: npm run test
       - name: Production build
         run: npm run build
