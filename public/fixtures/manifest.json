@@ -1,0 +1,6 @@
+{
+  "schemaVersion": 1,
+  "fixtureVersion": "phase-1-v1",
+  "scope": "minimum-persistence-demo",
+  "businessDataIncluded": false
+}
