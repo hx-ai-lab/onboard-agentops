@@ -6,6 +6,10 @@ import {
   MoonStar,
   PlaySquare,
   Settings2,
+  Wrench,
+  BookOpen,
+  Users,
+  Sparkles,
   X,
 } from "lucide-react";
 import { useState } from "react";
@@ -17,6 +21,10 @@ const links = [
   { to: "/workspace", label: "工作台", icon: PlaySquare },
   { to: "/runs", label: "运行记录", icon: MoonStar },
   { to: "/eval", label: "Eval 测评", icon: FlaskConical },
+  { to: "/skills", label: "Skill 注册中心", icon: Sparkles },
+  { to: "/tools", label: "Tool 注册中心", icon: Wrench },
+  { to: "/knowledge", label: "知识库", icon: BookOpen },
+  { to: "/catalog", label: "业务数据目录", icon: Users },
   { to: "/data", label: "数据管理", icon: Database },
   { to: "/mode", label: "运行模式", icon: Settings2 },
 ];

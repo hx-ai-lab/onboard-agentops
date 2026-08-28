@@ -76,7 +76,7 @@ export function DataPage() {
         <div>
           <h1 className="page-title">数据管理</h1>
           <p className="page-description">
-            第 1 阶段的最小 IndexedDB 验证界面。记录在页面刷新后仍会保留。
+            IndexedDB v2 全量导入导出与幂等重置。员工、知识、Skill、Tool 和工单也包含在备份中。
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
