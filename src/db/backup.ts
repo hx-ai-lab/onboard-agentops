@@ -2,14 +2,14 @@ import { SCHEMA_VERSION } from "../data/fixtures";
 import type { DemoBackup } from "../types/persistence";
 import type { OnboardOpsDatabase } from "./database";
 export async function exportDatabase(database:OnboardOpsDatabase):Promise<DemoBackup>{
-  const [settings,demoRecords,meta,employees,knowledgeDocuments,skills,skillSnapshots,tools,tickets,runs]=await Promise.all([database.settings.toArray(),database.demoRecords.toArray(),database.meta.toArray(),database.employees.toArray(),database.knowledgeDocuments.toArray(),database.skills.toArray(),database.skillSnapshots.toArray(),database.tools.toArray(),database.tickets.toArray(),database.runs.toArray()]);
-  return {schemaVersion:SCHEMA_VERSION,exportedAt:new Date().toISOString(),settings,demoRecords,meta,employees,knowledgeDocuments,skills,skillSnapshots,tools,tickets,runs};
+  const [settings,demoRecords,meta,employees,knowledgeDocuments,skills,skillSnapshots,tools,tickets,runs,agents,plannerConfigs,configSnapshots,humanAnnotations,userRatings,badCases,improvementDrafts]=await Promise.all([database.settings.toArray(),database.demoRecords.toArray(),database.meta.toArray(),database.employees.toArray(),database.knowledgeDocuments.toArray(),database.skills.toArray(),database.skillSnapshots.toArray(),database.tools.toArray(),database.tickets.toArray(),database.runs.toArray(),database.agents.toArray(),database.plannerConfigs.toArray(),database.configSnapshots.toArray(),database.humanAnnotations.toArray(),database.userRatings.toArray(),database.badCases.toArray(),database.improvementDrafts.toArray()]);
+  return {schemaVersion:SCHEMA_VERSION,exportedAt:new Date().toISOString(),settings,demoRecords,meta,employees,knowledgeDocuments,skills,skillSnapshots,tools,tickets,runs,agents,plannerConfigs,configSnapshots,humanAnnotations,userRatings,badCases,improvementDrafts};
 }
 export async function importDatabase(database:OnboardOpsDatabase,backup:DemoBackup):Promise<void>{
   if(backup.schemaVersion!==SCHEMA_VERSION) throw new Error(`不支持的数据版本：${backup.schemaVersion}`);
-  const required=["settings","demoRecords","meta","employees","knowledgeDocuments","skills","skillSnapshots","tools","tickets","runs"] as const;
+  const required=["settings","demoRecords","meta","employees","knowledgeDocuments","skills","skillSnapshots","tools","tickets","runs","agents","plannerConfigs","configSnapshots","humanAnnotations","userRatings","badCases","improvementDrafts"] as const;
   if(required.some(key=>!Array.isArray(backup[key]))) throw new Error("备份结构不完整");
-  await database.transaction("rw",[database.settings,database.demoRecords,database.meta,database.employees,database.knowledgeDocuments,database.skills,database.skillSnapshots,database.tools,database.tickets,database.runs],async()=>{
+  await database.transaction("rw",database.tables,async()=>{
     await Promise.all(required.map(key=>database.table(key).clear()));
     for(const key of required) await database.table(key).bulkAdd(structuredClone(backup[key]));
   });

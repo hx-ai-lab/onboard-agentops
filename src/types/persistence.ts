@@ -35,8 +35,18 @@ export interface PlanValidation { valid:boolean; errors:Array<{code:string;messa
 export interface TraceStep { stepId:string; stepType:"skill"|"tool"; capabilityId:string; capabilityVersion:number; input:unknown; output?:unknown; startedAt:string; finishedAt:string; durationMs:number; status:ExecutionStatus; evidenceRefs:string[]; errorCode?:string; errorMessage?:string }
 export interface RiskResult { decision:"allow"|"block"|"handoff"; flags:string[]; message:string }
 export interface RunRecord { id:string; question:string; conversationId:string; userContextSnapshot:UserContext; source:"workspace"|"chat"; createdAt:string; status:ExecutionStatus; finalReply:string; plan:ExecutionPlan; planValidation:PlanValidation; steps:TraceStep[]; evidence:Array<{id:string;type:"tool"|"knowledge";capabilityId:string;data:unknown}>; riskResult:RiskResult; durationMs:number; error?:{code:string;message:string}; provider:"fixture"; model:"deterministic-rules"; agentVersion:string; plannerVersion:string; skillVersions:Record<string,number>; toolVersions:Record<string,number>; knowledgeVersions:Record<string,number> }
+export interface AgentConfig { id:string; name:string; audience:string; systemPrompt:string; businessBoundary:string; knowledgeIds:string[]; skillIds:string[]; toolIds:string[]; version:number; enabled:boolean; updatedAt:string }
+export interface PlannerConfig { id:string; prompt:string; version:number; mandatoryCapabilities:string[]; allowedSkills:string[]; allowedTools:string[]; updatedAt:string }
+export type ConfigKind="agent"|"planner";
+export interface ConfigSnapshot { id:string; kind:ConfigKind; configId:string; version:number; content:string; createdAt:string; reason:string }
+export const ROOT_CAUSES=["Planner 选错能力","Planner 缺少必要步骤","Skill Prompt 问题","Tool 数据或调用失败","知识缺失","知识过期","上下文不足","评分规则问题","模型输出不稳定","权限或隐私问题"] as const;
+export type RootCause=typeof ROOT_CAUSES[number];
+export interface HumanAnnotation { id:string; runId:string; correctness:number; groundedness:number; relevance:number; completeness:number; toolUse:number; safety:number; tone:number; overall:number; rootCause:RootCause; note:string; createdAt:string; updatedAt:string }
+export interface UserRating { id:string; runId:string; score:number; note:string; createdAt:string }
+export interface BadCase { id:string; runId:string; rootCause:RootCause; status:"open"|"improving"|"rerun"|"closed"; note:string; pendingEval:boolean; createdAt:string; updatedAt:string }
+export interface ImprovementDraft { id:string; runId:string; targetKind:ConfigKind; targetId:string; suggestion:string; before:string; after:string; status:"draft"|"applied"; createdAt:string; appliedAt?:string; snapshotId?:string; rerunId?:string }
 export interface DemoBackup {
   schemaVersion: number; exportedAt: string; settings: AppSetting[]; demoRecords: DemoRecord[]; meta: DatabaseMeta[];
   employees: Employee[]; knowledgeDocuments: KnowledgeDocument[]; skills: Skill[]; skillSnapshots: SkillSnapshot[];
-  tools: LocalTool[]; tickets: Ticket[]; runs: RunRecord[];
+  tools: LocalTool[]; tickets: Ticket[]; runs: RunRecord[]; agents:AgentConfig[]; plannerConfigs:PlannerConfig[]; configSnapshots:ConfigSnapshot[]; humanAnnotations:HumanAnnotation[]; userRatings:UserRating[]; badCases:BadCase[]; improvementDrafts:ImprovementDraft[];
 }

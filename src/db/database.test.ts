@@ -72,7 +72,9 @@ describe("phase 3 migration", () => {
     legacy.close();
     const migrated=new OnboardOpsDatabase(name);await initializeDatabase(migrated);
     expect((await migrated.settings.get("user-change"))?.value).toBe("preserved");
-    expect((await migrated.meta.get("schemaVersion"))?.value).toBe("3");expect(await migrated.runs.count()).toBe(0);
+    expect((await migrated.meta.get("schemaVersion"))?.value).toBe("4");expect(await migrated.runs.count()).toBe(0);
     migrated.close();await Dexie.delete(name);
   });
 });
+
+describe("phase 4 migration",()=>{it("upgrades a real v3 database without destroying legacy rows",async()=>{const name=`phase4-v3-${crypto.randomUUID()}`;const legacy=new Dexie(name);legacy.version(3).stores({settings:"&key",demoRecords:"&id, updatedAt",meta:"&key",employees:"&employeeId,name,city,employeeType,onboardingStage",knowledgeDocuments:"&id,category,cityScope,employeeTypeScope,status,updatedAt",skills:"&id,enabled,updatedAt",skillSnapshots:"&snapshotId,skillId,snapshotAt",tools:"&id,enabled",tickets:"&id,employeeId,type,status,createdAt",runs:"&id,createdAt,status,conversationId,source,userContextSnapshot.employeeId"});await legacy.open();await legacy.table("settings").put({key:"user-v3",value:"preserved",updatedAt:"2026"});await legacy.table("meta").put({key:"initialized",value:"true",updatedAt:"2026"});legacy.close();const migrated=new OnboardOpsDatabase(name);await initializeDatabase(migrated);expect((await migrated.settings.get("user-v3"))?.value).toBe("preserved");expect((await migrated.meta.get("schemaVersion"))?.value).toBe("4");expect(await migrated.agents.count()).toBe(1);expect(await migrated.plannerConfigs.count()).toBe(1);migrated.close();await Dexie.delete(name)})});

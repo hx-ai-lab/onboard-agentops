@@ -9,16 +9,23 @@ export async function initializeDatabase(database:OnboardOpsDatabase):Promise<"s
   if ((await database.knowledgeDocuments.count())===0) await database.knowledgeDocuments.bulkAdd(structuredClone(initialKnowledgeDocuments));
   if ((await database.skills.count())===0) await database.skills.bulkAdd(structuredClone(initialSkills));
   if ((await database.tools.count())===0) await database.tools.bulkAdd(structuredClone(initialTools));
-  await database.meta.put({key:"schemaVersion",value:"3",updatedAt:FIXTURE_TIMESTAMP});
-  await database.meta.put({key:"fixtureVersion",value:"phase-3-v3",updatedAt:FIXTURE_TIMESTAMP});
+  await seedPhase4(database);
+  await database.meta.put({key:"schemaVersion",value:"4",updatedAt:FIXTURE_TIMESTAMP});
+  await database.meta.put({key:"fixtureVersion",value:"phase-4-v4",updatedAt:FIXTURE_TIMESTAMP});
   return "existing";
 }
 export async function resetDatabase(database:OnboardOpsDatabase):Promise<void> {
-  await database.transaction("rw",[database.settings,database.demoRecords,database.meta,database.employees,database.knowledgeDocuments,database.skills,database.skillSnapshots,database.tools,database.tickets,database.runs],async()=>{
-    await Promise.all([database.settings.clear(),database.demoRecords.clear(),database.meta.clear(),database.employees.clear(),database.knowledgeDocuments.clear(),database.skills.clear(),database.skillSnapshots.clear(),database.tools.clear(),database.tickets.clear(),database.runs.clear()]);
+  await database.transaction("rw",database.tables,async()=>{
+    await Promise.all(database.tables.map(table=>table.clear()));
     await database.settings.bulkAdd(structuredClone(initialSettings)); await database.demoRecords.bulkAdd(structuredClone(initialDemoRecords));
     await database.meta.bulkAdd([...structuredClone(initialMeta),{key:"initialized",value:"true",updatedAt:FIXTURE_TIMESTAMP}]);
     await database.employees.bulkAdd(structuredClone(initialEmployees)); await database.knowledgeDocuments.bulkAdd(structuredClone(initialKnowledgeDocuments));
     await database.skills.bulkAdd(structuredClone(initialSkills)); await database.tools.bulkAdd(structuredClone(initialTools));
+    await seedPhase4(database);
   });
+}
+async function seedPhase4(database:OnboardOpsDatabase){
+ const now=FIXTURE_TIMESTAMP;
+ if(await database.agents.count()===0) await database.agents.add({id:"onboarding-agent",name:"企业入职助手",audience:"一线销售人员与新员工",systemPrompt:"基于已核验的 Tool 与知识证据回答；保护隐私，必要时转人工。",businessBoundary:"仅处理入职材料、报到、账号、培训与办公行政，不承诺未核验状态。",knowledgeIds:initialKnowledgeDocuments.map(x=>x.id),skillIds:initialSkills.map(x=>x.id),toolIds:initialTools.map(x=>x.id),version:1,enabled:true,updatedAt:now});
+ if(await database.plannerConfigs.count()===0) await database.plannerConfigs.add({id:"default-planner",prompt:"识别意图，先确认身份，再选择最小且充分的能力；最终必须执行隐私风险检查。",version:1,mandatoryCapabilities:["privacy-risk-check"],allowedSkills:initialSkills.map(x=>x.id),allowedTools:initialTools.map(x=>x.id),updatedAt:now});
 }
