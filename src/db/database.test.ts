@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it } from "vitest";
+import Dexie from "dexie";
 import { initialDemoRecords } from "../data/fixtures";
 import { exportDatabase } from "./backup";
 import { OnboardOpsDatabase } from "./database";
@@ -57,5 +58,21 @@ describe("IndexedDB lifecycle", () => {
     expect(first.meta).toEqual(second.meta);
     expect(second.demoRecords).toEqual(initialDemoRecords);
     database.close();
+  });
+});
+
+describe("phase 3 migration", () => {
+  it("upgrades a real v2 database non-destructively and persists runs store", async () => {
+    const name = `phase3-v2-${crypto.randomUUID()}`;
+    const legacy = new Dexie(name);
+    legacy.version(2).stores({settings:"&key",demoRecords:"&id, updatedAt",meta:"&key",employees:"&employeeId,name,city,employeeType,onboardingStage",knowledgeDocuments:"&id,category,cityScope,employeeTypeScope,status,updatedAt",skills:"&id,enabled,updatedAt",skillSnapshots:"&snapshotId,skillId,snapshotAt",tools:"&id,enabled",tickets:"&id,employeeId,type,status,createdAt"});
+    await legacy.open();
+    await legacy.table("settings").put({key:"user-change",value:"preserved",updatedAt:"2026-01-01"});
+    await legacy.table("meta").put({key:"initialized",value:"true",updatedAt:"2026-01-01"});
+    legacy.close();
+    const migrated=new OnboardOpsDatabase(name);await initializeDatabase(migrated);
+    expect((await migrated.settings.get("user-change"))?.value).toBe("preserved");
+    expect((await migrated.meta.get("schemaVersion"))?.value).toBe("3");expect(await migrated.runs.count()).toBe(0);
+    migrated.close();await Dexie.delete(name);
   });
 });

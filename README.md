@@ -81,3 +81,9 @@ https://<github-user>.github.io/<repository-name>/
 ```
 
 当前仓库未配置 Git remote，因此不能声称已完成实际远端发布。
+
+## 第 3 阶段：统一 Agent 执行链路
+
+`/workspace` 与 `/chat` 都调用同一个 `runAgent` 入口。确定性 Planner 仅从当前启用的 Skill、Tool 与知识中选择能力，独立 Validator 在执行前检查身份、越权、精确状态 Tool、必需能力及隐私审核；Executor 顺序执行本地 Skill/Tool，失败时停止且不会补写事实。最终回复始终接受隐私决策，完整 Plan、校验、逐步输入输出、证据、错误、状态和耗时保存为 RunRecord，可在 `/runs` 筛选并查看详情。
+
+数据库从 Dexie v2 非破坏性升级到 v3：原表保持不变，仅新增 `runs` 表并更新 schema 元数据。已有行不会被初始化覆盖；导入、导出与二次确认重置均覆盖运行记录表，重置会清空运行历史并恢复同一套确定性 Fixture。

@@ -12,6 +12,7 @@ import type { RuntimeMode } from "../types/persistence";
 
 type DatabaseStatus = "initializing" | "ready" | "error";
 interface DatabaseContextValue {
+  db: typeof db;
   status: DatabaseStatus;
   error?: string;
   retry: () => void;
@@ -68,6 +69,7 @@ export function DatabaseProvider({ children }: { children: ReactNode }) {
       );
     };
     return {
+      db,
       status,
       error,
       runtimeMode,

@@ -9,13 +9,13 @@ export async function initializeDatabase(database:OnboardOpsDatabase):Promise<"s
   if ((await database.knowledgeDocuments.count())===0) await database.knowledgeDocuments.bulkAdd(structuredClone(initialKnowledgeDocuments));
   if ((await database.skills.count())===0) await database.skills.bulkAdd(structuredClone(initialSkills));
   if ((await database.tools.count())===0) await database.tools.bulkAdd(structuredClone(initialTools));
-  await database.meta.put({key:"schemaVersion",value:"2",updatedAt:FIXTURE_TIMESTAMP});
-  await database.meta.put({key:"fixtureVersion",value:"phase-2-v2",updatedAt:FIXTURE_TIMESTAMP});
+  await database.meta.put({key:"schemaVersion",value:"3",updatedAt:FIXTURE_TIMESTAMP});
+  await database.meta.put({key:"fixtureVersion",value:"phase-3-v3",updatedAt:FIXTURE_TIMESTAMP});
   return "existing";
 }
 export async function resetDatabase(database:OnboardOpsDatabase):Promise<void> {
-  await database.transaction("rw",[database.settings,database.demoRecords,database.meta,database.employees,database.knowledgeDocuments,database.skills,database.skillSnapshots,database.tools,database.tickets],async()=>{
-    await Promise.all([database.settings.clear(),database.demoRecords.clear(),database.meta.clear(),database.employees.clear(),database.knowledgeDocuments.clear(),database.skills.clear(),database.skillSnapshots.clear(),database.tools.clear(),database.tickets.clear()]);
+  await database.transaction("rw",[database.settings,database.demoRecords,database.meta,database.employees,database.knowledgeDocuments,database.skills,database.skillSnapshots,database.tools,database.tickets,database.runs],async()=>{
+    await Promise.all([database.settings.clear(),database.demoRecords.clear(),database.meta.clear(),database.employees.clear(),database.knowledgeDocuments.clear(),database.skills.clear(),database.skillSnapshots.clear(),database.tools.clear(),database.tickets.clear(),database.runs.clear()]);
     await database.settings.bulkAdd(structuredClone(initialSettings)); await database.demoRecords.bulkAdd(structuredClone(initialDemoRecords));
     await database.meta.bulkAdd([...structuredClone(initialMeta),{key:"initialized",value:"true",updatedAt:FIXTURE_TIMESTAMP}]);
     await database.employees.bulkAdd(structuredClone(initialEmployees)); await database.knowledgeDocuments.bulkAdd(structuredClone(initialKnowledgeDocuments));

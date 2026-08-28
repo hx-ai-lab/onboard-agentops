@@ -27,7 +27,7 @@ describe("application shell", () => {
       screen.getByText(/全部企业、员工、制度和运行指标均为虚构数据/),
     ).toBeInTheDocument();
   });
-  it("renders a safe placeholder instead of future business features", async () => {
+  it("renders the phase three agent workspace", async () => {
     window.location.hash = "#/workspace";
     render(<App />);
     await waitFor(() =>
@@ -38,6 +38,6 @@ describe("application shell", () => {
     await waitFor(() =>
       expect(screen.queryByRole("status")).not.toBeInTheDocument(),
     );
-    expect(screen.getByText("尚未实现")).toBeInTheDocument();
+    expect(screen.getByText(/所有输入均通过同一条/)).toBeInTheDocument();
   });
 });
