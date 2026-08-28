@@ -1,9 +1,13 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { act, cleanup, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { App } from "./App";
 import { db } from "../db/database";
 
 afterEach(async () => {
+  cleanup();
+  await act(async () => {
+    await Promise.resolve();
+  });
   db.close();
   await db.delete();
   window.location.hash = "";
@@ -16,6 +20,9 @@ describe("application shell", () => {
         screen.getByRole("heading", { name: "平台概览" }),
       ).toBeInTheDocument(),
     );
+    await waitFor(() =>
+      expect(screen.queryByRole("status")).not.toBeInTheDocument(),
+    );
     expect(
       screen.getByText(/全部企业、员工、制度和运行指标均为虚构数据/),
     ).toBeInTheDocument();
@@ -27,6 +34,9 @@ describe("application shell", () => {
       expect(
         screen.getByRole("heading", { name: "Agent 工作台" }),
       ).toBeInTheDocument(),
+    );
+    await waitFor(() =>
+      expect(screen.queryByRole("status")).not.toBeInTheDocument(),
     );
     expect(screen.getByText("尚未实现")).toBeInTheDocument();
   });
