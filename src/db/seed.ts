@@ -1,4 +1,4 @@
-import { FIXTURE_TIMESTAMP, initialDemoRecords, initialEmployees, initialKnowledgeDocuments, initialMeta, initialSettings, initialSkills, initialTools } from "../data/fixtures";
+import { FIXTURE_TIMESTAMP, initialDemoRecords, initialEmployees, initialEvalCases, initialKnowledgeDocuments, initialMeta, initialSettings, initialSkills, initialTools } from "../data/fixtures";
 import type { OnboardOpsDatabase } from "./database";
 export async function initializeDatabase(database:OnboardOpsDatabase):Promise<"seeded"|"existing"> {
   await database.open();
@@ -10,8 +10,9 @@ export async function initializeDatabase(database:OnboardOpsDatabase):Promise<"s
   if ((await database.skills.count())===0) await database.skills.bulkAdd(structuredClone(initialSkills));
   if ((await database.tools.count())===0) await database.tools.bulkAdd(structuredClone(initialTools));
   await seedPhase4(database);
-  await database.meta.put({key:"schemaVersion",value:"4",updatedAt:FIXTURE_TIMESTAMP});
-  await database.meta.put({key:"fixtureVersion",value:"phase-4-v4",updatedAt:FIXTURE_TIMESTAMP});
+  if((await database.evalCases.count())===0) await database.evalCases.bulkAdd(structuredClone(initialEvalCases));
+  await database.meta.put({key:"schemaVersion",value:"6",updatedAt:FIXTURE_TIMESTAMP});
+  await database.meta.put({key:"fixtureVersion",value:"phase-6-v6",updatedAt:FIXTURE_TIMESTAMP});
   return "existing";
 }
 export async function resetDatabase(database:OnboardOpsDatabase):Promise<void> {
@@ -22,6 +23,7 @@ export async function resetDatabase(database:OnboardOpsDatabase):Promise<void> {
     await database.employees.bulkAdd(structuredClone(initialEmployees)); await database.knowledgeDocuments.bulkAdd(structuredClone(initialKnowledgeDocuments));
     await database.skills.bulkAdd(structuredClone(initialSkills)); await database.tools.bulkAdd(structuredClone(initialTools));
     await seedPhase4(database);
+    await database.evalCases.bulkAdd(structuredClone(initialEvalCases));
   });
 }
 async function seedPhase4(database:OnboardOpsDatabase){
