@@ -10,6 +10,7 @@ import {
   BookOpen,
   Users,
   Sparkles,
+  Bot, Route as RouteIcon, ChartNoAxesCombined,
   X,
 } from "lucide-react";
 import { useState } from "react";
@@ -20,6 +21,10 @@ const links = [
   { to: "/", label: "概览", icon: Home, end: true },
   { to: "/workspace", label: "工作台", icon: PlaySquare },
   { to: "/runs", label: "运行记录", icon: MoonStar },
+  { to: "/agents", label: "Agent 管理", icon: Bot },
+  { to: "/planner", label: "Planner 管理", icon: RouteIcon },
+  { to: "/models", label: "模型与 Provider", icon: Settings2 },
+  { to: "/ops", label: "运营中心", icon: ChartNoAxesCombined },
   { to: "/eval", label: "Eval 测评", icon: FlaskConical },
   { to: "/skills", label: "Skill 注册中心", icon: Sparkles },
   { to: "/tools", label: "Tool 注册中心", icon: Wrench },
