@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./diagnostics";
 test("loads the shell, hash route, mode boundary, and disclaimer", async ({
   page,
 }) => {

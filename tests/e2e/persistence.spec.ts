@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./diagnostics";
 test("persists a write across refresh and resets idempotently", async ({
   page,
 }) => {
