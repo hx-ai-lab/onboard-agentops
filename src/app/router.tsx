@@ -9,6 +9,8 @@ import { SkillsPage } from "../routes/SkillsPage";
 import { ToolsPage } from "../routes/ToolsPage";
 import { KnowledgePage } from "../routes/KnowledgePage";
 import { CatalogPage } from "../routes/CatalogPage";
+import { WorkspacePage } from "../routes/WorkspacePage";
+import { RunDetailPage, RunsPage } from "../routes/RunsPage";
 
 export function AppRouter() {
   return (
@@ -23,9 +25,11 @@ export function AppRouter() {
         <Route path="mode" element={<ModePage />} />
         <Route
           path="workspace"
-          element={<PlaceholderPage title="Agent 工作台" />}
+          element={<WorkspacePage />}
         />
-        <Route path="runs" element={<PlaceholderPage title="运行记录" />} />
+        <Route path="chat" element={<WorkspacePage chat />} />
+        <Route path="runs" element={<RunsPage />} />
+        <Route path="runs/:id" element={<RunDetailPage />} />
         <Route path="eval" element={<PlaceholderPage title="Eval 测评" />} />
         <Route path="settings" element={<Navigate to="/mode" replace />} />
         <Route path="*" element={<NotFoundPage />} />
