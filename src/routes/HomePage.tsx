@@ -31,12 +31,12 @@ export function HomePage() {
         <div className="flex flex-wrap items-center gap-3">
           <h1 className="page-title">平台概览</h1>
           <span className="status-badge border-emerald-200 bg-emerald-50 text-emerald-800">
-            <CheckCircle2 size={14} />第 1 阶段基础能力
+            <CheckCircle2 size={14} />第 2 阶段能力目录
           </span>
         </div>
         <p className="page-description">
-          工程骨架与数据底座已建立。Agent、Planner、Skill、Tool、知识、Eval
-          与报告业务将在审核后按阶段增量实现。
+          星云保险集团虚构业务数据、知识、Skill 与本地 Tool 已就绪。Agent、Planner、Eval
+          与报告仍留待后续阶段。
         </p>
       </header>
       <section className="mt-8 grid gap-4 lg:grid-cols-3">
