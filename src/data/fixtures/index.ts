@@ -1,5 +1,5 @@
 import type { AppSetting, DatabaseMeta, DemoRecord, Employee, KnowledgeDocument, EvalCase, LocalTool, Skill } from "../../types/persistence";
-export const SCHEMA_VERSION = 6;
+export const SCHEMA_VERSION = 7;
 export const FIXTURE_TIMESTAMP = "2026-08-27T00:00:00.000Z";
 export const initialSettings: AppSetting[] = [{ key: "runtimeMode", value: "demo", updatedAt: FIXTURE_TIMESTAMP }];
 export const initialDemoRecords: DemoRecord[] = [{ id:"welcome", title:"欢迎使用 OnboardOps", note:"这是用于验证 IndexedDB 持久化的最小演示记录。", createdAt:FIXTURE_TIMESTAMP, updatedAt:FIXTURE_TIMESTAMP }];

@@ -5,3 +5,4 @@ export const schemaHistory=[
   {version:3,description:"新增统一执行链路 RunRecord"},
   {version:4,description:"非破坏性新增 Agent、Planner、配置快照与运营闭环数据"},
 ] as const;
+// v5/v6 add Eval cases/scores and batches/regressions; v7 adds report drafts and export audit records without rewriting existing rows.

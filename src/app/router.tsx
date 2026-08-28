@@ -12,6 +12,7 @@ import { WorkspacePage } from "../routes/WorkspacePage";
 import { RunDetailPage, RunsPage } from "../routes/RunsPage";
 import { EvalBatchDetailPage, EvalBatchesPage, EvalCasesPage, EvalComparePage } from "../routes/EvalPage";
 import { AgentsPage } from "../routes/AgentsPage"; import { PlannerPage } from "../routes/PlannerPage"; import { ModelsPage } from "../routes/ModelsPage"; import { OpsPage } from "../routes/OpsPage";
+import { ReportPage } from "../routes/ReportPage";
 
 export function AppRouter() {
   return (
@@ -33,6 +34,7 @@ export function AppRouter() {
         <Route path="runs/:id" element={<RunDetailPage />} />
         <Route path="agents" element={<AgentsPage />} /><Route path="planner" element={<PlannerPage />} /><Route path="models" element={<ModelsPage />} /><Route path="ops" element={<OpsPage />} />
         <Route path="eval" element={<Navigate to="/eval/cases" replace />} /><Route path="eval/cases" element={<EvalCasesPage />} /><Route path="eval/batches" element={<EvalBatchesPage />} /><Route path="eval/batches/:id" element={<EvalBatchDetailPage />} /><Route path="eval/compare" element={<EvalComparePage />} />
+        <Route path="eval/reports/:batchId" element={<ReportPage />} />
         <Route path="settings" element={<Navigate to="/mode" replace />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
