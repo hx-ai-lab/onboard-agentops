@@ -1,89 +1,58 @@
 # OnboardOps
 
-企业入职 AI 助手 AgentOps 测评运营平台。当前仓库完成第 2 阶段：在第一阶段工程与数据底座上增加“星云保险集团”虚构业务目录、知识库、Skill 与真实本地 Tool。Agent、Planner、Executor、Eval 与报告尚未实现。
+企业入职 AI 助手 AgentOps 测评运营平台。它以确定性演示 Agent 展示 Planner、Validator、Skill、Tool、知识、Risk Check、Trace、Eval、批次回归和可导出三联报告。
 
 > 本平台用于产品设计与 AI 测评演示。全部企业、员工、制度和运行指标均为虚构数据，不代表任何真实公司生产信息。
 
-## 环境要求
+## 从零安装与启动
 
-- Node.js 20.19 或更高版本
-- npm 10 或更高版本
-- Chromium（仅 Playwright E2E 需要）
-
-## 本地启动
+需要 Node.js 20.19+、npm 10+；E2E 需要 Chromium。
 
 ```bash
 npm install
 npm run dev
 ```
 
-Vite 会输出本地访问地址。应用使用 `HashRouter`，因此业务路径位于 `/#/` 后，不依赖服务器 SPA 回退。
+访问 Vite 输出地址。应用使用 `HashRouter`；业务路由位于 `/#/` 后。
 
-## 验证命令
+## 演示操作
+
+1. 在“Agent 工作台”选择员工并输入“我下周一上海入职，还缺什么材料”；查看 Planner、Validator、Tool、知识证据、回复、Risk 与 Trace。
+2. 在 Run 详情加入 Eval；到“Eval 测评案例”编辑/单测并选择用例创建批次。
+3. 查看批次 PASS、FAIL、REVIEW、ERROR；修改 Skill Prompt（保存会创建版本快照），用相同 caseIds 回归并在“回归对比”检查可比性。
+4. 从批次或对比页进入三联报告。分别预览/导出设计单、运行报告、Bad Case 决策单，或导出完整测评包。
+
+报告 HTML 是内联样式的离线文件；“打印 / PDF”打开 A4 专用视图并由浏览器另存 PDF；CSV 带 UTF-8 BOM；JSON 先经 zod schema 校验并包含完整 Run/Trace。打印报告仅展示 Trace 摘要。人工结论、根因、评审与最终发布决定存入 IndexedDB，不会由系统编造。
+
+## 测试与构建
 
 ```bash
 npm run typecheck
 npm run lint
 npm run test
 npm run build
-npm run test:e2e
 npm run validate
+npx playwright install chromium
+npm run test:e2e
 ```
 
-`npm run validate` 顺序执行 typecheck、lint、单元测试和生产构建。首次执行 E2E 前可使用 `npx playwright install chromium` 安装浏览器。
+Vitest 只收集 `src/**/*.test.*`，E2E 独立位于 `tests/e2e`。Playwright 会以 `/onboard-agentops/` base 构建并验证桌面、移动端和持久化流程。
 
-## 演示数据与重置
+## 数据备份与重置
 
-应用首次启动会将固定 v2 Fixture 导入 IndexedDB；已有 v1 数据库通过 Dexie 原位升级并补齐新表，不删除或覆盖既有记录。打开“数据管理”可以：
+“数据管理”支持全部 IndexedDB 数据 JSON 导入/导出和二次确认重置；v7 非破坏性增加报告草稿和导出记录表，迁移、导入、重置均使用事务。重置幂等且会清除用户生成数据，恢复固定 Fixture。`npm run demo:reset` 输出浏览器重置指引。
 
-1. 新增记录并刷新页面验证持久化；
-2. 导出或导入完整演示数据 JSON；
-3. 点击“重置数据”，在确认对话框中再次确认；
-4. 重复重置会得到完全一致的固定 Fixture。
+## GitHub Pages
 
-## 第 2 阶段业务能力
-
-- `/catalog`：12 名虚构员工及材料、账号、培训、办公与本地工单目录；
-- `/knowledge`：12 份文档、编辑/启停/版本与确定性本地规则检索；
-- `/skills`：14 个 Skill 的筛选、启停、Prompt 编辑、单项测试、快照、diff 与回滚；
-- `/tools`：11 个 IndexedDB Tool 的 schema、启停、测试、耗时与七种结果状态。
-
-这些管理配置均写入 IndexedDB，刷新后继续生效。本地检索是规则检索演示，不代表真实向量数据库。
-
-`npm run demo:reset` 会输出浏览器端重置操作指引。由于数据位于浏览器沙箱内，Node 脚本不会伪装成已清除浏览器 IndexedDB。
-
-## 运行模式与安全
-
-- **演示稳定模式**：默认模式，无需 API Key，当前提供确定性本地数据底座。
-- **智能模式**：本阶段仅提供配置边界。没有安全后端时界面明确显示不可用。
-
-未来安全后端可通过 `VITE_AGENT_API_BASE_URL` 配置。不得将 API Key 写入 `.env`、源代码或任何 `VITE_*` 变量；Vite 变量会公开到浏览器 bundle。
-
-## GitHub Pages 子路径构建
-
-本地模拟仓库名为 `onboard-agentops` 的 Pages 构建：
+本地模拟仓库子路径：
 
 ```bash
 VITE_BASE_PATH=/onboard-agentops/ npm run build
 npm run preview
 ```
 
-访问 `http://localhost:4173/onboard-agentops/#/`。静态资源使用该 base，前端使用 HashRouter，刷新路由不会请求不存在的服务器文件。
+访问 `http://localhost:4173/onboard-agentops/#/`。`.github/workflows/pages.yml` 对 PR 只验证；对 `main` 依次安装依赖、typecheck、lint、unit、安装 Chromium、核心 E2E、production build。全部成功后才上传并部署 Pages artifact。在 Settings → Pages 选择 **GitHub Actions**，发布地址为 `https://<github-user>.github.io/<repository-name>/`。
 
-## GitHub Pages 发布
+## 安全限制
 
-`.github/workflows/pages.yml` 在 `main` 分支推送或手动触发时执行：安装依赖、typecheck、lint、unit test、build、上传 artifact 和部署 Pages。存在 `package-lock.json` 时工作流使用 `npm ci`；锁文件尚未生成时使用 `npm install` 完成一次可执行的验证构建并输出警告。仓库设置中选择 **Settings → Pages → Source → GitHub Actions**。
-
-发布地址格式为：
-
-```text
-https://<github-user>.github.io/<repository-name>/
-```
-
-当前仓库未配置 Git remote，因此不能声称已完成实际远端发布。
-
-## 第 3 阶段：统一 Agent 执行链路
-
-`/workspace` 与 `/chat` 都调用同一个 `runAgent` 入口。确定性 Planner 仅从当前启用的 Skill、Tool 与知识中选择能力，独立 Validator 在执行前检查身份、越权、精确状态 Tool、必需能力及隐私审核；Executor 顺序执行本地 Skill/Tool，失败时停止且不会补写事实。最终回复始终接受隐私决策，完整 Plan、校验、逐步输入输出、证据、错误、状态和耗时保存为 RunRecord，可在 `/runs` 筛选并查看详情。
-
-数据库从 Dexie v2 非破坏性升级到 v3：原表保持不变，仅新增 `runs` 表并更新 schema 元数据。已有行不会被初始化覆盖；导入、导出与二次确认重置均覆盖运行记录表，重置会清空运行历史并恢复同一套确定性 Fixture。
+演示稳定模式无需 API Key。前端不保存长期密钥、不上传报告数据。智能模式只有配置了 `VITE_AGENT_API_BASE_URL` 安全后端才可用；否则明确显示“未配置安全后端”，不会伪装成功或静默降级。不要把 API Key 放入源代码、`.env` 或任何会进入客户端 bundle 的 `VITE_*` 变量。

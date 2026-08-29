@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./diagnostics";
 test("built assets use the configured Pages base and hash routes avoid server fallback", async ({
   page,
 }) => {

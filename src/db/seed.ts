@@ -11,8 +11,8 @@ export async function initializeDatabase(database:OnboardOpsDatabase):Promise<"s
   if ((await database.tools.count())===0) await database.tools.bulkAdd(structuredClone(initialTools));
   await seedPhase4(database);
   if((await database.evalCases.count())===0) await database.evalCases.bulkAdd(structuredClone(initialEvalCases));
-  await database.meta.put({key:"schemaVersion",value:"6",updatedAt:FIXTURE_TIMESTAMP});
-  await database.meta.put({key:"fixtureVersion",value:"phase-6-v6",updatedAt:FIXTURE_TIMESTAMP});
+  await database.meta.put({key:"schemaVersion",value:"7",updatedAt:FIXTURE_TIMESTAMP});
+  await database.meta.put({key:"fixtureVersion",value:"phase-7-v7",updatedAt:FIXTURE_TIMESTAMP});
   return "existing";
 }
 export async function resetDatabase(database:OnboardOpsDatabase):Promise<void> {

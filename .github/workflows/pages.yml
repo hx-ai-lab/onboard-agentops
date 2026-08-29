@@ -30,6 +30,11 @@ jobs:
         run: npm run lint
       - name: Unit and component tests (Vitest only)
         run: npm run test
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Chromium core E2E
+        run: npm run test:e2e -- --project=desktop
+        env: { VITE_BASE_PATH: "/onboard-agentops/" }
       - name: Production build
         run: npm run build
         env: { VITE_BASE_PATH: "/${{ github.event.repository.name }}/" }
